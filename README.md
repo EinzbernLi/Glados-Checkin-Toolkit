@@ -1,6 +1,6 @@
-# GLaDOS / Railgun 自动签到
+# GLaDOS Check-in Toolkit
 
-[![CI](https://github.com/EinzbernLi/Glados-Railgun-checkin/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/EinzbernLi/Glados-Railgun-checkin/actions/workflows/ci.yml)
+[![CI](https://github.com/EinzbernLi/Glados-Checkin-Toolkit/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/EinzbernLi/Glados-Checkin-Toolkit/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 
 基于 GitHub Actions 的 GLaDOS / Railgun 多账号自动签到工具。每份 Cookie 与目标域名显式绑定，支持积分兑换、失败重试和 PushDeer、PushPlus、Telegram 聚合通知；无需自建服务器。
@@ -257,6 +257,8 @@ Actions 日志和 cron 使用 UTC，而通知中的运行时间会转换为 `Asi
 ## 许可证与来源
 
 本项目按 [GNU GPL-3.0](LICENSE) 发布，源自
-[Devilstore/Glados-Railgun-checkin](https://github.com/Devilstore/Glados-Railgun-checkin)。本 Fork 的详细来源与第三方说明见 [NOTICE](NOTICE)。
+[Devilstore/Glados-Railgun-checkin](https://github.com/Devilstore/Glados-Railgun-checkin)，并曾由
+[EinzbernLi/Glados-Railgun-checkin](https://github.com/EinzbernLi/Glados-Railgun-checkin) 维护演进。
+完整来源链与第三方说明见 [NOTICE](NOTICE)。
 
 本工具不保证第三方服务长期可用。请遵守相关服务条款，并自行承担使用自动化脚本的风险。

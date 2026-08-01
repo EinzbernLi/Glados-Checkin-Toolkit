@@ -1,4 +1,4 @@
-Glados-Railgun-checkin
+GLaDOS Check-in Toolkit
 Copyright and source attribution
 
 This project remains licensed under GNU GPL-3.0.
@@ -7,9 +7,15 @@ Upstream and primary source:
   Devilstore/Glados-Railgun-checkin
   https://github.com/Devilstore/Glados-Railgun-checkin
 
-This maintained fork:
+Previous maintained fork:
   EinzbernLi/Glados-Railgun-checkin
+  https://github.com/EinzbernLi/Glados-Railgun-checkin
   modularized from the upstream project under GPL-3.0
+
+Current independent project:
+  EinzbernLi/Glados-Checkin-Toolkit
+  https://github.com/EinzbernLi/Glados-Checkin-Toolkit
+  migrated from the previous maintained fork with complete Git history retained
 
 GPL-3.0 architectural reference:
   EinzbernLi/Glados_checkin

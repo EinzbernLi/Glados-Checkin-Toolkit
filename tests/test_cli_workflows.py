@@ -205,6 +205,28 @@ def test_readme_local_links_and_images_exist():
     assert all((ROOT / target).is_file() for target in local_targets)
 
 
+def test_independent_repository_identity_and_provenance_are_documented():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    notice = (ROOT / "NOTICE").read_text(encoding="utf-8")
+    package_doc = (ROOT / "src" / "__init__.py").read_text(encoding="utf-8")
+    api = (ROOT / "src" / "api.py").read_text(encoding="utf-8")
+    ci = (ROOT / ".github" / "workflows" / "ci.yml").read_text(encoding="utf-8")
+
+    assert readme.startswith("# GLaDOS Check-in Toolkit")
+    assert "EinzbernLi/Glados-Checkin-Toolkit" in readme
+    assert "branch=main" in readme
+    assert "本 Fork" not in readme
+    for repository in (
+        "Devilstore/Glados-Railgun-checkin",
+        "EinzbernLi/Glados-Railgun-checkin",
+        "EinzbernLi/Glados-Checkin-Toolkit",
+    ):
+        assert repository in notice
+    assert "Glados-Checkin-Toolkit/1" in api
+    assert "Independent GPL-3.0 project" in package_doc
+    assert "branches: [main]" in ci
+
+
 def test_readme_documents_all_exchange_plans_and_disable_switch():
     text = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "积分兑换策略" in text

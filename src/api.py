@@ -98,7 +98,7 @@ class GladosAPI:
         self.headers = {
             "cookie": cookie,
             "origin": self.base_url,
-            "user-agent": "Glados-Railgun-checkin/2",
+            "user-agent": "Glados-Checkin-Toolkit/1",
         }
 
     def close(self):

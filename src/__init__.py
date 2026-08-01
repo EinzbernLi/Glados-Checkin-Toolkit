@@ -1,5 +1,5 @@
-"""Modular GLaDOS/Railgun check-in application.
+"""GLaDOS Check-in Toolkit.
 
-Derived from EinzbernLi/Glados-Railgun-checkin and informed by the GPL-3.0
-reference implementation EinzbernLi/Glados_checkin.
+Independent GPL-3.0 project retaining the source chain of
+Devilstore/Glados-Railgun-checkin and EinzbernLi/Glados-Railgun-checkin.
 """
