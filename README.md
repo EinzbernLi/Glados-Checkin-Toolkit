@@ -108,6 +108,21 @@ cookie-account-1&cookie-account-2
 | <code>TG_BOT_TOKEN</code> | Telegram Bot Token |
 | <code>TG_CHAT_ID</code> | Telegram Chat ID，必须与 Bot Token 同时设置 |
 
+#### Telegram 配置步骤
+
+1. 在 Telegram 中搜索官方 **@BotFather**，发送 `/newbot`，按提示设置机器人名称和用户名（用户名必须以 `bot` 结尾）。完成后 BotFather 会返回一串 token；将它作为 `TG_BOT_TOKEN` 保存到 GitHub Actions 的 **Repository secret**。
+2. 用刚创建的机器人打开私聊并发送 `/start`。如果要推送到群组，请先把机器人加入群组并在群内发送一条消息；如果要推送到频道，请将机器人加入频道并授予发消息权限，然后在频道发布一条消息。
+3. 在本地浏览器中打开下面的地址，把 `<BOT_TOKEN>` 替换成刚获得的 token（不要把完整地址发到 Issue、聊天群或日志中）：
+
+   ```text
+   https://api.telegram.org/bot<BOT_TOKEN>/getUpdates
+   ```
+
+   在返回的 JSON 中找到最近一条 `message.chat.id`、`channel_post.chat.id` 或对应的 `chat.id`，这就是 `TG_CHAT_ID`。私聊通常是正数；群组或频道可能是负数，请保留完整数值。
+4. 在仓库的 **Settings → Secrets and variables → Actions → New repository secret** 中分别添加 `TG_BOT_TOKEN` 和 `TG_CHAT_ID`。两者必须同时设置；token 只放在 Secret 中，不要写入 README、代码、Issue 或 Actions 日志。
+
+如果 `result` 为空，先向机器人发送一条新消息，再重新请求 `getUpdates`。配置完成后可手动运行一次 `dry-run` 检查配置，再运行 `live` 验证通知。
+
 完全不配置通知时，签到仍可正常运行。
 
 ### 通知内容与聚合方式

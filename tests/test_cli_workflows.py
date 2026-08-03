@@ -253,3 +253,15 @@ def test_readme_documents_domain_binding_aggregation_and_beijing_time():
     assert "Railgun 签到结果" in text
     assert "两个及以上域名" in text
     assert "北京时间" in text
+
+
+def test_readme_documents_telegram_secret_setup():
+    text = (ROOT / "README.md").read_text(encoding="utf-8")
+    assert "Telegram 配置步骤" in text
+    assert "@BotFather" in text
+    assert "/newbot" in text
+    assert "TG_BOT_TOKEN" in text and "TG_CHAT_ID" in text
+    assert "https://api.telegram.org/bot<BOT_TOKEN>/getUpdates" in text
+    assert "message.chat.id" in text
+    assert "channel_post.chat.id" in text
+    assert "Repository secret" in text
