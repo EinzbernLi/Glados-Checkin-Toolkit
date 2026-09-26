@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import time
+import unicodedata
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
 from typing import Callable
+from urllib.parse import quote, quote_plus
 
 import requests
 
@@ -140,7 +142,37 @@ class GladosAPI:
             )
         if code is None:
             raise ProtocolError("签到响应缺少 code")
-        raise ApiRejectedError(f"签到接口业务拒绝，code={code}")
+        safe_code = str(code)[:16] if type(code) is int else "invalid"
+        error = f"签到接口业务拒绝，code={safe_code}"
+        message = self._safe_message(payload.get("message"))
+        if message:
+            error += f"；message={message}"
+        raise ApiRejectedError(error[:200])
+
+    def _safe_message(self, message) -> str:
+        if not isinstance(message, str):
+            return ""
+        # Remove known credentials before truncating, including individual values
+        # and URL-encoded echoes. Never include the rest of the response payload.
+        secrets = {self.cookie}
+        secrets.update(
+            part.partition("=")[2].strip()
+            for part in self.cookie.split(";")
+            if "=" in part
+        )
+        variants = {
+            variant
+            for secret in secrets if secret
+            for variant in (secret, quote(secret, safe=""), quote_plus(secret, safe=""))
+        }
+        for secret in sorted(variants, key=len, reverse=True):
+            message = message.replace(secret, "[REDACTED]")
+        return " ".join(
+            "".join(
+                " " if unicodedata.category(char).startswith("C") else char
+                for char in message
+            ).split()
+        )[:160]
 
     def points(self) -> int:
         payload = self._request_json("GET", "/api/user/points")

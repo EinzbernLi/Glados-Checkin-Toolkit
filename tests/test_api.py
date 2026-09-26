@@ -129,3 +129,47 @@ def test_unknown_checkin_business_code_is_rejected():
     )
     with pytest.raises(ApiRejectedError):
         GladosAPI("glados.cloud", "fake-cookie", client).checkin()
+
+
+def rejected_checkin_message(message, cookie="fake-cookie", code=4):
+    client = HttpClient(
+        FakeSession([FakeResponse(200, {"code": code, "message": message})]), 0, 0
+    )
+    with pytest.raises(ApiRejectedError) as exc:
+        GladosAPI("glados.cloud", cookie, client).checkin()
+    return str(exc.value)
+
+
+def test_rejection_includes_server_message_without_changing_failure_state():
+    assert "code=4；message=please check in on the website" == (
+        rejected_checkin_message("please check in on the website").split("，", 1)[1]
+    )
+
+
+def test_rejection_redacts_cookie_and_individual_encoded_values():
+    from urllib.parse import quote
+
+    cookie = "koa:sess=private/value+123; koa:sess.sig=signature-secret"
+    message = f"denied {cookie} {quote('private/value+123', safe='')}"
+    result = rejected_checkin_message(message, cookie)
+    assert "message=denied" in result
+    for value in (cookie, "private/value+123", "signature-secret", "private%2Fvalue%2B123"):
+        assert value not in result
+
+
+def test_rejection_message_is_single_line_and_bounded():
+    result = rejected_checkin_message("denied\n\r\x1b[31m" + "x" * 500)
+    assert "message=denied" in result
+    assert len(result) <= 200
+    assert not any(ord(char) < 32 or ord(char) == 127 for char in result)
+
+
+@pytest.mark.parametrize("message", [None, {"cookie": "sensitive"}, ["sensitive"]])
+def test_rejection_does_not_dump_structured_messages(message):
+    assert rejected_checkin_message(message) == "签到接口业务拒绝，code=4"
+
+
+def test_rejection_does_not_dump_non_numeric_code():
+    result = rejected_checkin_message("denied", code={"cookie": "sensitive"})
+    assert "sensitive" not in result
+    assert "code=invalid" in result
