@@ -142,6 +142,7 @@ cookie-account-1&cookie-account-2
 | Variable | 默认值 | 作用 |
 |---|---|---|
 | <code>GLADOS_ALLOW_CUSTOM_DOMAINS</code> | <code>false</code> | 是否允许自定义域名 |
+| <code>GLADOS_USER_AGENT</code> | <code>Glados-Checkin-Toolkit/1</code> | 获取 GLaDOS Cookie 时浏览器的实际 User-Agent，仅用于 glados.cloud |
 | <code>GLADOS_ENABLE_EXCHANGE</code> | <code>true</code> | 是否为 GLaDOS 自动兑换积分 |
 | <code>RAILGUN_ENABLE_EXCHANGE</code> | 继承 GLaDOS | 是否为 Railgun 自动兑换积分 |
 | <code>GLADOS_RETRY_MAX</code> | <code>2</code> | 网络重试次数，允许 0–5 |
@@ -248,6 +249,16 @@ tests/                             单元测试与 workflow 约束测试
 ### 定时任务为什么没有准点运行？
 
 GitHub 不保证 scheduled workflow 准点执行，高峰期可能延迟。先检查 Actions 是否已在 Fork 中启用，以及仓库是否长期没有活动。
+
+### `code=4；reason=device-mismatch` 怎么处理？
+
+这表示服务端认为签到请求的设备与建立登录会话的设备不一致。若网页手动签到成功而脚本失败，可以配置获取该 Cookie 时浏览器的实际 User-Agent：
+
+1. 在成功手动签到的浏览器开发者工具 Console 中执行 `navigator.userAgent`，复制返回字符串的内容，不包含外层引号。
+2. 打开 **Settings → Secrets and variables → Actions → Variables**，设置 `GLADOS_USER_AGENT` 为该值。
+3. 手动运行 `dry-run`，确认出现 `GLaDOS User-Agent: 已配置`，再运行 `live` 验证。
+
+此变量只作用于 `glados.cloud` 请求，不影响 Railgun 或自定义域名。未设置时保留 `Glados-Checkin-Toolkit/1`。多个 GLaDOS 账号会共用此值，应使用相同浏览器设备标识的 Cookie。服务端可能还检查其他设备特征；配置 User-Agent 后仍须以实际签到结果为准。`code=4` 始终保持失败判定，不能当作“已签到”。
 
 ### “今日已签到”算失败吗？
 

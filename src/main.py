@@ -51,6 +51,9 @@ def main(
             )
         print(f"通知渠道: {', '.join(summary['channels']) or '未配置'}")
         print(f"HTTP 最大尝试次数: {summary['retry_attempts']}")
+        if "glados.cloud" in config.domains:
+            ua_state = "已配置" if summary["glados_user_agent_configured"] else "使用默认值"
+            print(f"GLaDOS User-Agent: {ua_state}")
         return 0
 
     logger = configure_logging(config.verbose)
@@ -84,6 +87,9 @@ def _default_api_factory(config: AppConfig):
             config.retry_backoff,
             timeout=(config.connect_timeout, config.read_timeout),
         )
-        return GladosAPI(domain, cookie, client)
+        return GladosAPI(
+            domain, cookie, client,
+            user_agent=config.glados_user_agent if domain == "glados.cloud" else "",
+        )
 
     return factory

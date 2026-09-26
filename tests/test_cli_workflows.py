@@ -265,3 +265,11 @@ def test_readme_documents_telegram_secret_setup():
     assert "message.chat.id" in text
     assert "channel_post.chat.id" in text
     assert "Repository secret" in text
+
+
+
+def test_workflow_passes_glados_user_agent_as_environment_variable():
+    workflow = load_workflow("gladosCheck.yml")
+    step = next(step for step in workflow["jobs"]["checkin"]["steps"] if "GLADOS_COOKIES" in step.get("env", {}))
+    assert step["env"]["GLADOS_USER_AGENT"] == "${{ vars.GLADOS_USER_AGENT }}"
+    assert "GLADOS_USER_AGENT" not in step["run"]

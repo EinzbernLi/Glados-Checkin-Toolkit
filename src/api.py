@@ -92,7 +92,9 @@ class HttpClient:
 
 
 class GladosAPI:
-    def __init__(self, domain: str, cookie: str, client: HttpClient):
+    def __init__(
+        self, domain: str, cookie: str, client: HttpClient, *, user_agent: str = ""
+    ):
         self.domain = domain
         self.cookie = cookie
         self.client = client
@@ -100,7 +102,7 @@ class GladosAPI:
         self.headers = {
             "cookie": cookie,
             "origin": self.base_url,
-            "user-agent": "Glados-Checkin-Toolkit/1",
+            "user-agent": user_agent or "Glados-Checkin-Toolkit/1",
         }
 
     def close(self):

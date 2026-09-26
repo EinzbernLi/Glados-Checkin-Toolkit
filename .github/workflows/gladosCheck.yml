@@ -50,6 +50,7 @@ jobs:
           fi
         env:
           GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
+          GLADOS_USER_AGENT: ${{ vars.GLADOS_USER_AGENT }}
           RAILGUN_COOKIES: ${{ secrets.RAILGUN_COOKIES }}
           CUSTOM_DOMAIN_COOKIES: ${{ secrets.CUSTOM_DOMAIN_COOKIES }}
           GLADOS_DOMAINS: ${{ vars.GLADOS_DOMAINS }}

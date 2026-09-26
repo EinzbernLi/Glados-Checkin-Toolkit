@@ -53,6 +53,14 @@ def _bounded_float(
     return parsed
 
 
+def _user_agent(value: str | None) -> str:
+    if value is None:
+        return ""
+    if len(value) > 1024 or any(ord(char) < 32 or ord(char) > 126 for char in value):
+        raise ConfigError("GLADOS_USER_AGENT 必须是最多 1024 字符的单行 ASCII 请求头值")
+    return value.strip()
+
+
 def _valid_hostname(host: str) -> bool:
     if any(mark in host for mark in ("://", "/", "\\", "@", ":")):
         return False
@@ -167,6 +175,7 @@ class AppConfig:
     pushplus_token: str = ""
     tg_bot_token: str = ""
     tg_chat_id: str = ""
+    glados_user_agent: str = ""
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str]) -> "AppConfig":
@@ -287,6 +296,7 @@ class AppConfig:
             pushplus_token=pushplus,
             tg_bot_token=tg_token,
             tg_chat_id=tg_chat,
+            glados_user_agent=_user_agent(environ.get("GLADOS_USER_AGENT")),
         )
 
     @property
@@ -333,4 +343,5 @@ class AppConfig:
             "target_policies": tuple(target_policies),
             "channels": self.enabled_channels,
             "retry_attempts": self.retry_max + 1,
+            "glados_user_agent_configured": bool(self.glados_user_agent),
         }
