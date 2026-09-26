@@ -131,9 +131,9 @@ def test_unknown_checkin_business_code_is_rejected():
         GladosAPI("glados.cloud", "fake-cookie", client).checkin()
 
 
-def rejected_checkin_message(message, cookie="fake-cookie", code=4):
+def rejected_checkin_message(message, cookie="fake-cookie", code=4, **extra):
     client = HttpClient(
-        FakeSession([FakeResponse(200, {"code": code, "message": message})]), 0, 0
+        FakeSession([FakeResponse(200, {"code": code, "message": message, **extra})]), 0, 0
     )
     with pytest.raises(ApiRejectedError) as exc:
         GladosAPI("glados.cloud", cookie, client).checkin()
@@ -173,3 +173,16 @@ def test_rejection_does_not_dump_non_numeric_code():
     result = rejected_checkin_message("denied", code={"cookie": "sensitive"})
     assert "sensitive" not in result
     assert "code=invalid" in result
+
+
+
+def test_device_mismatch_reason_is_preserved():
+    result = rejected_checkin_message("Automated check-in detected.", reason="device-mismatch")
+    assert "code=4；reason=device-mismatch" in result
+    assert "message=Automated check-in detected." in result
+
+
+def test_arbitrary_rejection_reason_is_not_logged():
+    result = rejected_checkin_message("denied", reason="private-session-data")
+    assert "private-session-data" not in result
+    assert "reason=" not in result

@@ -144,6 +144,8 @@ class GladosAPI:
             raise ProtocolError("签到响应缺少 code")
         safe_code = str(code)[:16] if type(code) is int else "invalid"
         error = f"签到接口业务拒绝，code={safe_code}"
+        if code == 4 and payload.get("reason") == "device-mismatch":
+            error += "；reason=device-mismatch"
         message = self._safe_message(payload.get("message"))
         if message:
             error += f"；message={message}"
